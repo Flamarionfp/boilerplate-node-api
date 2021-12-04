@@ -1,0 +1,8 @@
+.env
+.gradle
+.idea
+.vscode
+Pods
+build
+node_modules
+local.properties

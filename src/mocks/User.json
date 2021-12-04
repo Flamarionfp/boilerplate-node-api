@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "nome": "Flamarion",
+    "email": "flamarionfp@gmail.com",
+    "telefone": "99999999999",
+    "genero": "masculino",
+    "foto": "",
+    "cpf": "00000000000"
+  },
+  {
+    "id": 2,
+    "nome": "Allan",
+    "email": "alan@email.com",
+    "telefone": "99999999999",
+    "genero": "masculino",
+    "foto": "",
+    "cpf": "00000000000"
+  },
+  {
+    "id": 3,
+    "nome": "Eduardo",
+    "email": "eduardo@email.com",
+    "telefone": "99999999999",
+    "genero": "masculino",
+    "foto": "",
+    "cpf": "00000000000"
+  }
+]
