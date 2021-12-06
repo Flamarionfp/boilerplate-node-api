@@ -1,20 +1,15 @@
 import { Request, Response } from 'express'
 
-import User from '../mocks/User'
-
-interface user {
-  id: number;
-  nome: string;
-  email: string
-  telefone: string
-  genero: string
-  cpf: string
-}
-
+import User from '../schemas/User'
 class UserController {
   public async getUsers (req: Request, res: Response): Promise<Response> {
-    const users = User
+    const users = await User.find()
     return res.json(users)
+  }
+
+  public async createUser (req: Request, res: Response): Promise<Response> {
+    const user = await User.create(req.body)
+    return res.json(user)
   }
 }
 
