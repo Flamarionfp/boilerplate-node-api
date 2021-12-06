@@ -9,6 +9,7 @@ class UserController {
 
   public async createUser (req: Request, res: Response): Promise<Response> {
     const user = await User.create(req.body)
+    console.log(user)
     return res.json(user)
   }
 }

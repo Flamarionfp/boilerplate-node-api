@@ -12,7 +12,7 @@ class Database {
     this.name = name
   }
 
-  connect (): void {
+  public connect (): void {
     mongoose.connect(`mongodb://${this.host}/${this.name}`).then(() => {
       console.log(`Conexão bem sucedida ao Mongo DB - ${NAME}`)
     }).catch((err) => {
