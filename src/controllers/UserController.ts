@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import User from '../schemas/User'
+import User from '../database/schemas/User'
 class UserController {
   public async getUsers (req: Request, res: Response): Promise<Response> {
     const users = await User.find()
