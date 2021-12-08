@@ -12,5 +12,6 @@ routes.get('/', (req, res) => {
 
 routes.get('/users', UserController.getUsers)
 routes.post('/user', UserController.createUser)
+routes.post('/auth', UserController.authUser)
 
 export default routes
