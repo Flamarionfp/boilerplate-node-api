@@ -11,6 +11,6 @@ routes.get('/', (req, res) => {
 // User endpoints
 
 routes.get('/users', UserController.getUsers)
-routes.post('/users', UserController.createUser)
+routes.post('/user', UserController.createUser)
 
 export default routes
