@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-// Middleware
+// Middlewares
 import authMiddleware from '../src/middlewares/authMiddleware'
 
 // Controllers
@@ -9,7 +9,7 @@ import UserController from './controllers/UserController'
 const routes = Router()
 
 routes.get('/', (req, res) => {
-  res.send('olá')
+  res.redirect('https://github.com/Flamarionfp/standard-api')
 })
 
 // User endpoints
