@@ -14,7 +14,7 @@ routes.get('/', (req, res) => {
 
 // User endpoints
 routes.get('/users', authMiddleware, UserController.getUsers)
-routes.get('/user/:id', authMiddleware, UserController.getUserByUser)
+routes.get('/user/:id', authMiddleware, UserController.getUserById)
 routes.post('/user', UserController.createUser)
 routes.post('/auth', UserController.authUser)
 

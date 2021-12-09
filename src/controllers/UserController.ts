@@ -14,7 +14,7 @@ class UserController {
     }
   }
 
-  public async getUserByUser(req: Request, res: Response): Promise<Response> {
+  public async getUserById(req: Request, res: Response): Promise<Response> {
     try {
       const user = await User.findById(req.params.id)
       return res.status(200).json(user)
