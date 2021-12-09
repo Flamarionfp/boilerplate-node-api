@@ -13,9 +13,15 @@ routes.get('/', (req, res) => {
 })
 
 // User endpoints
-routes.get('/users', authMiddleware, UserController.getUsers)
-routes.get('/user/:id', authMiddleware, UserController.getUserById)
+
+// No auth
 routes.post('/user', UserController.createUser)
 routes.post('/auth', UserController.authUser)
+
+// Require auth
+routes.get('/users', authMiddleware, UserController.getUsers)
+routes.get('/user/find/id/:id', authMiddleware, UserController.getUserById)
+routes.get('/user/find/email/:email', authMiddleware, UserController.getUserByEmail)
+
 
 export default routes
