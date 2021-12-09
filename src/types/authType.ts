@@ -1,6 +1,6 @@
 type authType = {
   secret: string,
-  expirationTime: number
+  expirationTime: number | string;
 }
 
 export default authType;
