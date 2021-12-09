@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
-
 import User from '../database/schemas/User'
 import hashPassword from '../utils/hashPassword/hashPassword'
 import checkPassword from '../utils/hashPassword/checkPassword'
+import generateToken from '../utils/generateToken'
+
 class UserController {
   public async getUsers(req: Request, res: Response): Promise<Response> {
     try {
@@ -17,7 +18,7 @@ class UserController {
     try {
       const passwordHashed = await hashPassword(req.body.password)
       const user = await User.create({ ...req.body, password: passwordHashed })
-      return res.status(200).json(user)
+      return res.status(200).send({ user, token: generateToken({ id: user.id }) })
     } catch (error) {
       return res.status(500).json({ error: error })
     }
@@ -37,7 +38,9 @@ class UserController {
         return res.status(400).send({ error: 'Senha inválida' })
       }
 
-      return res.status(200).json(user)
+      user.password = ''
+
+      return res.status(200).send({ user, token: generateToken({ id: user.id }) })
 
     } catch (error) {
       return res.status(500).json({ error: error })
