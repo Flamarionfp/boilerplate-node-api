@@ -14,6 +14,15 @@ class UserController {
     }
   }
 
+  public async getUserByUser(req: Request, res: Response): Promise<Response> {
+    try {
+      const user = await User.findById(req.params.id)
+      return res.status(200).json(user)
+    } catch (error) {
+      return res.status(500).json({ error: error })
+    }
+  }
+
   public async createUser(req: Request, res: Response): Promise<Response> {
     try {
       const passwordHashed = await hashPassword(req.body.password)
