@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { authInfo } from '../interfaces/authInfo'
 import User from '../database/schemas/User'
 import hashPassword from '../utils/hashPassword/hashPassword'
 import checkPassword from '../utils/hashPassword/checkPassword'
@@ -69,6 +70,16 @@ class UserController {
     }
   }
 
+  public async updateUser(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params
+    if (id === req.userId) {
+      const user = await User.findByIdAndUpdate(id, req.body)
+      console.log(user)
+      return res.status(200).send({ status: 'ok', user: user })
+    } else {
+      return res.status(401).send({ status: 'unauthorized', error: 'Você não pode atualizar os dados desse usuário' })
+    }
+  }
 }
 
-export default new UserController()
+export default new UserController();

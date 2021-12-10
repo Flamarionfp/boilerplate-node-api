@@ -23,6 +23,7 @@ routes.post('/auth', UserController.authUser)
 routes.get('/users', authMiddleware, UserController.getUsers)
 routes.get('/user/find/id/:id', authMiddleware, UserController.getUserById)
 routes.get('/user/find/email/:email', authMiddleware, UserController.getUserByEmail)
+routes.put('/user/update/:id', authMiddleware, UserController.updateUser)
 
 
 export default routes
