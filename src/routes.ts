@@ -1,7 +1,8 @@
 import { Router } from 'express'
 
 // Middlewares
-import authMiddleware from '../src/middlewares/authMiddleware'
+import checkEmailAvailable from './middlewares/checkEmailAvailable'
+import authMiddleware from '../src/middlewares/auth'
 
 // Controllers
 import UserController from './controllers/UserController'
@@ -15,7 +16,7 @@ routes.get('/', (req, res) => {
 // User endpoints
 
 // No auth
-routes.post('/user', UserController.createUser)
+routes.post('/user', checkEmailAvailable, UserController.createUser)
 routes.post('/auth', UserController.authUser)
 
 // Require auth
