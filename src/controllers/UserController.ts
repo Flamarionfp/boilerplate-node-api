@@ -83,7 +83,25 @@ class UserController {
     } catch (error) {
       return res.status(500).json({ error: 'Falha ao atualizar usuário' })
     }
+  }
 
+  public async deleteUser(req: Request, res: Response): Promise<Response | undefined> {
+    try {
+      const { id } = req.params
+
+      if (id === req.userId) {
+        const user = await User.findByIdAndDelete(id)
+        if (user) {
+          return res.status(200).send({ msg: 'Usuário deletado com sucesso' })
+        } else {
+          return res.status(400).send({ error: 'Falha ao deletar usuário' })
+        }
+      } else {
+        return res.status(400).send({ error: 'Você não pode deletar esse usuário' })
+      }
+    } catch (error) {
+      return res.status(500).send({ msg: 'Ocorreu um erro por parte do servidor', error: error })
+    }
   }
 }
 
