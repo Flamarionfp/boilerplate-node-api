@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import User from '../database/schemas/User'
 import jwt from "jsonwebtoken";
 import authType from "../types/authType";
 // @ts-ignore
@@ -6,7 +7,7 @@ import auth from "../config/auth";
 
 const authConfig: authType = auth;
 
-export default (req: Request, res: Response, next: NextFunction) => {
+export default async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -29,10 +30,16 @@ export default (req: Request, res: Response, next: NextFunction) => {
       .send({ error: "Houve um problema na formação do token" });
   }
 
-  jwt.verify(token, authConfig.secret, (err: any, decoded: any) => {
+  jwt.verify(token, authConfig.secret, async (err: any, decoded: any) => {
     if (err) return res.status(401).send({ error: "Token inválido" });
     if (decoded !== undefined) {
       req.userId = decoded.id;
+      const user = await User.findOne({ id: decoded.id, isActive: true });
+      console.log('user aquiiiiii')
+      console.log(user)
+      if (user === null) {
+        return res.status(401).send({ error: 'Erro de autenticação' })
+      }
     } else {
       return res.status(400).send({ error: "Id inválido" });
     }

@@ -9,6 +9,7 @@ class Database {
   constructor(host: string, name: string) {
     this.host = host
     this.name = name
+    // this.drop() // Usar somente em desenvolvimento !!
   }
 
   public connect(): void {
@@ -18,6 +19,12 @@ class Database {
       console.log(`Houve um erro ao conectar ao Mongo DB - ${err}`)
     })
   }
+
+  private drop(): void {
+    mongoose.connection.dropDatabase()
+  }
 }
 
 export default new Database(HOST, NAME)
+
+

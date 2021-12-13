@@ -6,6 +6,7 @@ interface UserInterface extends Document {
   firstName: string,
   lastName: string,
   phone?: string,
+  isActive: boolean,
   fullName(): string
 }
 
@@ -14,7 +15,8 @@ const UserSchema = new Schema({
   password: { type: String, required: true, select: false },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  phone: { type: String},
+  phone: { type: String },
+  isActive: { type: Boolean, required: true }
 
 }, {
   timestamps: true

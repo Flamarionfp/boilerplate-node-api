@@ -8,8 +8,7 @@ class UserController {
   public async authUser(req: Request, res: Response): Promise<Response> {
     const { email, password } = req.body
     try {
-      const user = await User.findOne({ email: email }).select('+password')
-      console.log(user)
+      const user = await User.findOne({ email: email, isActive: true }).select('+password')
       if (!user) {
         return res.status(400).send({ error: 'Usuário não encontrado' })
       }
@@ -62,7 +61,7 @@ class UserController {
   public async createUser(req: Request, res: Response): Promise<Response> {
     try {
       const passwordHashed = await hashPassword(req.body.password)
-      const user = await User.create({ ...req.body, password: passwordHashed })
+      const user = await User.create({ ...req.body, password: passwordHashed, isActive: true })
       return res.status(200).send({ user, token: generateToken({ id: user.id }) })
     } catch (error) {
       return res.status(500).json({ error: error })
@@ -85,6 +84,20 @@ class UserController {
     }
   }
 
+  // Deletar de forma lógica
+  public async removeUser(req: Request, res: Response): Promise<Response | undefined> {
+    try {
+      const { id } = req.params
+
+      if (id === req.userId) {
+        const user = await User.findByIdAndUpdate(id, { isActive: false })
+        return res.status(200).send({ msg: 'Usuário removido com sucesso!' })
+      }
+    } catch (error) {
+      return res.status(500).send({ msg: 'Ocorreu um erro por parte do servidor', error: error })
+    }
+  }
+
   public async deleteUser(req: Request, res: Response): Promise<Response | undefined> {
     try {
       const { id } = req.params
@@ -103,6 +116,7 @@ class UserController {
       return res.status(500).send({ msg: 'Ocorreu um erro por parte do servidor', error: error })
     }
   }
+
 }
 
 export default new UserController();
