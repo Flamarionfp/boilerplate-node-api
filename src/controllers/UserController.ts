@@ -119,24 +119,33 @@ class UserController {
 
   public async changePassword(req: Request, res: Response): Promise<Response | undefined | null> {
     try {
-      const { newPassword } = req.body
-      console.log('new password: ', newPassword)
+      const { password, newPassword } = req.body
       const { id } = req.params
       if (id === req.userId) {
         const user = await User.findOne({ id: id }).select('+password')
         const userPassword = user?.password
-        console.log('user hashed password: ', userPassword)
+
         if (userPassword) {
-          console.log('Retorno do check password')
-          console.log(!checkPassword(newPassword, userPassword))
-          // O novo password informado é diferente do antigo e a requisição pode seguir
-          if (!checkPassword(newPassword, userPassword)) {
-            return res.status(200).send('OK')
+          const arePasswordsEqual = await checkPassword(password, userPassword)
+          if (!arePasswordsEqual) {
+            return res.status(400).send({ msg: 'Senha inválida' })
           } else {
-            return res.status(400).send({ msg: 'A nova senha não pode ser igual a anterior' })
+            const hashedNewPassword = await hashPassword(newPassword)
+            const areNewPasswordEqual = await checkPassword(newPassword, userPassword)
+            if (!areNewPasswordEqual) {
+              console.log('aqui vem o update')
+              const updatedUser = await User.findByIdAndUpdate(id, { password: hashedNewPassword })
+              if (updatedUser) {
+                return res.status(200).send({ msg: 'Senha alterada com sucesso!' })
+              } else {
+                return res.status(400).send({ msg: 'Erro ao seguir com a requisição' })
+              }
+            } else {
+              return res.status(400).send({ msg: 'A nova senha não pode ser igual a anterior' })
+            }
           }
         } else {
-          return res.status(400).send({ msg: 'Ocorreu um erro ao alterar sua senha' })
+          return res.status(400).send({ msg: 'Erro, usuário não encontrado' })
         }
       } else {
         return res.status(401).send({ msg: 'Você não pode alterar a senha desse usuário' })
@@ -148,3 +157,4 @@ class UserController {
 }
 
 export default new UserController();
+

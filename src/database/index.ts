@@ -21,7 +21,9 @@ class Database {
   }
 
   private drop(): void {
-    mongoose.connection.dropDatabase()
+    mongoose.connection.dropDatabase().then(() => {
+      console.log(`Base ${this.name} deletada!`)
+    }).catch(err => console.log(err))
   }
 }
 
