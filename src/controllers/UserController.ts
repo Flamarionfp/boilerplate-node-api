@@ -133,7 +133,6 @@ class UserController {
             const hashedNewPassword = await hashPassword(newPassword)
             const areNewPasswordEqual = await checkPassword(newPassword, userPassword)
             if (!areNewPasswordEqual) {
-              console.log('aqui vem o update')
               const updatedUser = await User.findByIdAndUpdate(id, { password: hashedNewPassword })
               if (updatedUser) {
                 return res.status(200).send({ msg: 'Senha alterada com sucesso!' })
