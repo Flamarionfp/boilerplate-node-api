@@ -35,8 +35,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     if (decoded !== undefined) {
       req.userId = decoded.id;
       const user = await User.findOne({ id: decoded.id, isActive: true });
-      console.log('user aquiiiiii')
-      console.log(user)
+      // console.log(user)
       if (user === null) {
         return res.status(401).send({ error: 'Erro de autenticação' })
       }

@@ -3,8 +3,6 @@ import User from '../database/schemas/User'
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.findOne({ email: req.body.email })
-  console.log('user')
-  console.log(user)
   if (!user) {
     next()
   } else {
