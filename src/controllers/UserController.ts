@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import User from '../database/schemas/User'
-import { UserInterface } from '../database/schemas/User'
 import hashPassword from '../utils/hashPassword/hashPassword'
 import checkPassword from '../utils/hashPassword/checkPassword'
 import generateToken from '../utils/generateToken'
