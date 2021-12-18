@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import User from '../database/schemas/User'
 import hashPassword from '../utils/hashPassword/hashPassword'
 import checkPassword from '../utils/hashPassword/checkPassword'
-import generateToken from '../utils/generateToken'
+import generateJwtToken from '../utils/generateJwtToken'
 
 class UserController {
   public async authUser(req: Request, res: Response): Promise<Response> {
@@ -20,7 +20,7 @@ class UserController {
 
       user.password = ''
 
-      return res.status(200).send({ user, token: generateToken({ id: user.id }) })
+      return res.status(200).send({ user, token: generateJwtToken({ id: user.id }) })
 
     } catch (error) {
       return res.status(500).json({ error: error })

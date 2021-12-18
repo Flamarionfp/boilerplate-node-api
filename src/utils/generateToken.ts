@@ -1,14 +1,7 @@
-import jwt from 'jsonwebtoken'
-import authType from '../types/authType'
-// @ts-ignore
-import auth from '../config/auth'
+import crypto from 'crypto'
 
-const authConfig: authType = auth
-
-const generateToken = (params: object): string => {
-  return jwt.sign(params, authConfig.secret, {
-    expiresIn: authConfig.expirationTime
-  })
+const generateToken = (): string => {
+  return crypto.randomBytes(20).toString('hex')
 }
 
 export default generateToken
