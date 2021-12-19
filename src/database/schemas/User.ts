@@ -8,6 +8,8 @@ export interface UserInterface extends Document {
   lastName: string,
   phone?: string,
   isActive: boolean,
+  resetPasswordToken?: string,
+  resetPasswordTokenExpiration?: number,
   fullName(): string
 }
 
@@ -17,8 +19,9 @@ const UserSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   phone: { type: String },
-  isActive: { type: Boolean, required: true }
-
+  isActive: { type: Boolean, required: true },
+  resetPasswordToken: { type: String, required: false, select: false },
+  resetPasswordTokenExpiration: { type: Number, required: false, select: false }
 }, {
   timestamps: true
 })

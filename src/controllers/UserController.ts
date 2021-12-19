@@ -160,7 +160,20 @@ class UserController {
     if (user) {
       // restante da lógica
       const token = generateToken()
+      const tokenExpirationTime = Date.now() + 1
       console.log(token)
+      console.log(tokenExpirationTime)
+      const updateResetPasswordToken = await User.findOneAndUpdate(email, {
+        resetPasswordToken: token,
+        resetPasswordTokenExpiration: tokenExpirationTime
+      })
+
+      if (updateResetPasswordToken) {
+        // fazer envio do e-mail
+      } else {
+        return res.status(500).send({ error: 'Ocorreu um erro ao prosseguir com sua requisição' })
+      }
+
     } else {
       return res.status(400).send({ error: 'O e-mail informado não está cadastrado no sistema' })
     }
