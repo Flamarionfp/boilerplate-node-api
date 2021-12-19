@@ -27,5 +27,6 @@ routes.put('/user/update/:id', authMiddleware, UserController.updateUser)
 routes.put('/user/remove/:id', authMiddleware, UserController.removeUser)
 routes.delete('/user/delete/:id', authMiddleware, UserController.deleteUser)
 routes.patch('/user/changepassword/:id', authMiddleware, UserController.changePassword)
+routes.post('/user/forgot_password', UserController.forgotPassword)
 
 export default routes

@@ -3,6 +3,7 @@ import User from '../database/schemas/User'
 import hashPassword from '../utils/hashPassword/hashPassword'
 import checkPassword from '../utils/hashPassword/checkPassword'
 import generateJwtToken from '../utils/generateJwtToken'
+import generateToken from '../utils/generateToken'
 
 class UserController {
   public async authUser(req: Request, res: Response): Promise<Response> {
@@ -150,6 +151,18 @@ class UserController {
       }
     } catch (error) {
       return res.status(500).send({ msg: 'Ocorreu um erro por parte do servidor', error: error })
+    }
+  }
+
+  public async forgotPassword(req: Request, res: Response): Promise<Response> {
+    const { email } = req.body
+    const user = await User.findOne({ email: email })
+    if (user) {
+      // restante da lógica
+      const token = generateToken()
+      console.log(token)
+    } else {
+      return res.status(400).send({ error: 'O e-mail informado não está cadastrado no sistema' })
     }
   }
 }
