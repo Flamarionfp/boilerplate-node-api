@@ -160,7 +160,8 @@ class UserController {
     if (user) {
       // restante da lógica
       const token = generateToken()
-      const tokenExpirationTime = Date.now() + 1
+      const now = new Date()
+      const tokenExpirationTime = now.setHours(now.getHours() + 1)
       console.log(token)
       console.log(tokenExpirationTime)
       const updateResetPasswordToken = await User.findOneAndUpdate(email, {
@@ -170,6 +171,7 @@ class UserController {
 
       if (updateResetPasswordToken) {
         // fazer envio do e-mail
+        return res.send()
       } else {
         return res.status(500).send({ error: 'Ocorreu um erro ao prosseguir com sua requisição' })
       }
