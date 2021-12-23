@@ -182,6 +182,39 @@ class UserController {
       return res.status(500).send({ error: 'Ocorreu um erro ao prosseguir com a requisição' })
     }
   }
+
+  public async resetPassword(req: Request, res: Response): Promise<Response> {
+    try {
+      const { token, password } = req.body
+      const user = await User.findOne({ resetPasswordToken: token }).select('+resetPasswordTokenExpiration +password')
+      if (user) {
+        const now = Date.now()
+        if (user.resetPasswordTokenExpiration) {
+          if (now < user.resetPasswordTokenExpiration) {
+            if (password !== user.password) {
+              const hashedNewPassword = await hashPassword(password)
+              const userResetPassword = await User.findByIdAndUpdate(user.id, { password: hashedNewPassword })
+              if (userResetPassword) {
+                return res.status(200).send({ msg: 'Sua senha foi redefinida com sucesso' })
+              } else {
+                return res.status(500).send({ error: 'Erro ao redefinir senha' })
+              }
+            } else {
+              return res.status(4000).send({ error: 'A nova senha não pode ser igual a anterior' })
+            }
+          } else {
+            return res.status(400).send({ error: 'Token expirado' })
+          }
+        } else {
+          return res.status(500).send({ error: 'Erro ao prosseguir com a requisição' })
+        }
+      } else {
+        return res.status(400).send({ msg: 'Token inválido' })
+      }
+    } catch (error) {
+      return res.status(500).send({ error: 'Erro ao prosseguir com a requisição' })
+    }
+  }
 }
 
 export default new UserController();
