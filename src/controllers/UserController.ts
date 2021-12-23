@@ -63,7 +63,7 @@ class UserController {
     try {
       const passwordHashed = await hashPassword(req.body.password)
       const user = await User.create({ ...req.body, password: passwordHashed, isActive: true })
-      return res.status(200).send({ user, token: generateToken({ id: user.id }) })
+      return res.status(200).send({ user, token: generateJwtToken({ id: user.id }) })
     } catch (error) {
       return res.status(500).json({ error: error })
     }
