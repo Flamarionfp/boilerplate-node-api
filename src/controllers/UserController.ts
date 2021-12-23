@@ -7,8 +7,8 @@ import generateToken from '../utils/generateToken'
 import sendEmailForgotPassword from '../mail/sendEmailForgotPassword'
 class UserController {
   public async authUser(req: Request, res: Response): Promise<Response> {
-    const { email, password } = req.body
     try {
+      const { email, password } = req.body
       const user = await User.findOne({ email: email, isActive: true }).select('+password')
       if (!user) {
         return res.status(400).send({ error: 'Usuário não encontrado' })
