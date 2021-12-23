@@ -126,12 +126,12 @@ class UserController {
         const userPassword = user?.password
 
         if (userPassword) {
-          const arePasswordsEqual = await checkPassword(password, userPassword)
+          const arePasswordsEqual = checkPassword(password, userPassword)
           if (!arePasswordsEqual) {
             return res.status(400).send({ msg: 'Senha inválida' })
           } else {
             const hashedNewPassword = await hashPassword(newPassword)
-            const areNewPasswordEqual = await checkPassword(newPassword, userPassword)
+            const areNewPasswordEqual = checkPassword(newPassword, userPassword)
             if (!areNewPasswordEqual) {
               const updatedUser = await User.findByIdAndUpdate(id, { password: hashedNewPassword })
               if (updatedUser) {
