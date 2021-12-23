@@ -4,7 +4,7 @@ import hashPassword from '../utils/hashPassword/hashPassword'
 import checkPassword from '../utils/hashPassword/checkPassword'
 import generateJwtToken from '../utils/generateJwtToken'
 import generateToken from '../utils/generateToken'
-
+import mailer from '../mail/mailer'
 class UserController {
   public async authUser(req: Request, res: Response): Promise<Response> {
     const { email, password } = req.body
@@ -158,20 +158,29 @@ class UserController {
     const { email } = req.body
     const user = await User.findOne({ email: email })
     if (user) {
-      // restante da lógica
+      const { firstName } = user
       const token = generateToken()
       const now = new Date()
       const tokenExpirationTime = now.setHours(now.getHours() + 1)
-      console.log(token)
-      console.log(tokenExpirationTime)
       const updateResetPasswordToken = await User.findOneAndUpdate(email, {
         resetPasswordToken: token,
         resetPasswordTokenExpiration: tokenExpirationTime
       })
 
       if (updateResetPasswordToken) {
-        // fazer envio do e-mail
-        return res.send()
+        mailer.sendMail(
+          {
+            to: email,
+            from: process.env.EMAIL_FROM,
+            subject: 'Recuperação de senha',
+            html: "<p>Deu certo</p>"
+            // template: '../caminho do template',
+          },
+          (err) => {
+            return res.status(500).send({ msg: 'Erro ao enviar e-mail', error: err })
+          }
+        )
+        return res.status(200).send({ msg: `Foi enviado um e-mail para ${email}` })
       } else {
         return res.status(500).send({ error: 'Ocorreu um erro ao prosseguir com sua requisição' })
       }
