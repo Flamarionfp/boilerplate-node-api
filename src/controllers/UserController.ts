@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import User from '../database/schemas/User'
-import hashPassword from '../utils/hashPassword/hashPassword'
-import checkPassword from '../utils/hashPassword/checkPassword'
+import hashPassword from '../utils/hashPassword'
+import checkPassword from '../utils/checkPassword'
 import generateJwtToken from '../utils/generateJwtToken'
 import generateToken from '../utils/generateToken'
-import mailer from '../mail/mailer'
+import sendEmailForgotPassword from '../mail/sendEmailForgotPassword'
 class UserController {
   public async authUser(req: Request, res: Response): Promise<Response> {
     const { email, password } = req.body
@@ -154,39 +154,32 @@ class UserController {
     }
   }
 
-  public async forgotPassword(req: Request, res: Response): Promise<Response> {
-    const { email } = req.body
-    const user = await User.findOne({ email: email })
-    if (user) {
-      const { firstName } = user
-      const token = generateToken()
-      const now = new Date()
-      const tokenExpirationTime = now.setHours(now.getHours() + 1)
-      const updateResetPasswordToken = await User.findOneAndUpdate(email, {
-        resetPasswordToken: token,
-        resetPasswordTokenExpiration: tokenExpirationTime
-      })
+  public async forgotPassword(req: Request, res: Response): Promise<Response | undefined> {
+    try {
+      const { email } = req.body
+      const user = await User.findOne({ email: email })
+      if (user) {
+        const token = generateToken()
+        const now = new Date()
+        const tokenExpirationTime = now.setHours(now.getHours() + 1)
+        const updateResetPasswordToken = await User.findOneAndUpdate(email, {
+          resetPasswordToken: token,
+          resetPasswordTokenExpiration: tokenExpirationTime
+        })
 
-      if (updateResetPasswordToken) {
-        mailer.sendMail(
-          {
-            to: email,
-            from: process.env.EMAIL_FROM,
-            subject: 'Recuperação de senha',
-            html: "<p>Deu certo</p>"
-            // template: '../caminho do template',
-          },
-          (err) => {
-            return res.status(500).send({ msg: 'Erro ao enviar e-mail', error: err })
+        if (updateResetPasswordToken) {
+          const isEmailSended = await sendEmailForgotPassword(email, token)
+          if (isEmailSended) {
+            return res.status(200).send({ msg: `Foi enviado um e-mail para ${email}` })
+          } else {
+            return res.status(500).send({ error: 'Ocorreu um erro ao enviar o e-mail' })
           }
-        )
-        return res.status(200).send({ msg: `Foi enviado um e-mail para ${email}` })
+        }
       } else {
-        return res.status(500).send({ error: 'Ocorreu um erro ao prosseguir com sua requisição' })
+        return res.status(400).send({ error: 'O e-mail informado não está cadastrado no sistema' })
       }
-
-    } else {
-      return res.status(400).send({ error: 'O e-mail informado não está cadastrado no sistema' })
+    } catch (error) {
+      return res.status(500).send({ error: 'Ocorreu um erro ao prosseguir com a requisição' })
     }
   }
 }
