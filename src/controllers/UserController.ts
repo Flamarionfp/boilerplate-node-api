@@ -4,7 +4,9 @@ import hashPassword from '../utils/hashPassword'
 import checkPassword from '../utils/checkPassword'
 import generateJwtToken from '../utils/generateJwtToken'
 import generateToken from '../utils/generateToken'
-import sendEmailForgotPassword from '../mail/sendEmailForgotPassword'
+import Mail from '../mail/Mail'
+
+const mail = new Mail()
 class UserController {
   public async authUser(req: Request, res: Response): Promise<Response> {
     try {
@@ -168,7 +170,7 @@ class UserController {
         })
 
         if (updateResetPasswordToken) {
-          const isEmailSended = await sendEmailForgotPassword(email, token)
+          const isEmailSended = mail.sendEmail(email, { token }, 'Recuperar senha', 'forgotPassword')
           if (isEmailSended) {
             return res.status(200).send({ msg: `Foi enviado um e-mail para ${email}` })
           } else {
