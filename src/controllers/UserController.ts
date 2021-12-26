@@ -16,11 +16,6 @@ class UserController {
         return res.status(400).send({ error: 'Usuário não encontrado' })
       }
 
-      // Retorna false se o password informado na requisição não bater com o criptografado
-      if (!checkPassword(password, user.password)) {
-        return res.status(400).send({ error: 'Senha inválida' })
-      }
-
       user.password = ''
 
       return res.status(200).send({ user, token: generateJwtToken({ id: user.id }) })
@@ -33,18 +28,32 @@ class UserController {
   public async getUsers(req: Request, res: Response): Promise<Response> {
     try {
       const users = await User.find()
-      return res.status(200).json(users)
+      return res.status(200).send({
+        success: true,
+        data: users
+      })
     } catch (error) {
-      return res.status(500).json({ error: error })
+      return res.status(500).send({
+        success: false,
+        msg: 'Erro ao buscar usuários',
+        error: error
+      })
     }
   }
 
   public async getUserById(req: Request, res: Response): Promise<Response> {
     try {
       const user = await User.findById(req.params.id)
-      return res.status(200).json(user)
+      return res.status(200).send({
+        success: true,
+        data: user
+      })
     } catch (error) {
-      return res.status(500).json({ error: 'Usuário não encontrado' })
+      return res.status(500).send({
+        success: false,
+        msg: 'Usuário não encontrado',
+        error: error
+      })
     }
   }
 
@@ -52,12 +61,19 @@ class UserController {
     try {
       const user = await User.findOne({ email: req.params.email })
       if (user !== null) {
-        return res.status(200).json(user)
+        return res.status(200).send({
+          sucess: true,
+          data: user
+        })
       } else {
         return res.status(404).send({ error: 'Usuário não encontrado' })
       }
     } catch (error) {
-      return res.status(500).json({ error: error })
+      return res.status(500).send({
+        success: false,
+        msg: 'Usuário não encontrado',
+        error: error
+      })
     }
   }
 
@@ -65,9 +81,17 @@ class UserController {
     try {
       const passwordHashed = await hashPassword(req.body.password)
       const user = await User.create({ ...req.body, password: passwordHashed, isActive: true })
-      return res.status(200).send({ user, token: generateJwtToken({ id: user.id }) })
+      return res.status(200).send({
+        sucesso: true,
+        data: { user, token: generateJwtToken({ id: user.id }) },
+        msg: 'Usuário cadastrado com sucesso'
+      })
     } catch (error) {
-      return res.status(500).json({ error: error })
+      return res.status(500).send({
+        success: false,
+        msg: 'Falha ao cadastrar usuário',
+        error: error
+      })
     }
   }
 
@@ -77,12 +101,23 @@ class UserController {
 
       if (id === req.userId) {
         const user = await User.findByIdAndUpdate(id, req.body)
-        return res.status(200).send({ status: 'ok', user: user })
+        return res.status(200).send({
+          success: true,
+          data: user,
+          msg: 'Usuário atualizado com sucesso'
+        })
       } else {
-        return res.status(401).send({ status: 'unauthorized', error: 'Você não pode atualizar os dados desse usuário' })
+        return res.status(401).send({
+          success: false,
+          msg: 'Você não pode atualizar os dados desse usuário',
+          error: 'unauthorized'
+        })
       }
     } catch (error) {
-      return res.status(500).json({ error: 'Falha ao atualizar usuário' })
+      return res.status(500).send({
+        success: true,
+        msg: 'Falha ao atualizar usuário'
+      })
     }
   }
 
@@ -93,10 +128,18 @@ class UserController {
 
       if (id === req.userId) {
         const user = await User.findByIdAndUpdate(id, { isActive: false })
-        return res.status(200).send({ msg: 'Usuário removido com sucesso!' })
+        return res.status(200).send({
+          success: true,
+          data: user,
+          msg: 'Usuário removido com sucesso!'
+        })
       }
     } catch (error) {
-      return res.status(500).send({ msg: 'Ocorreu um erro por parte do servidor', error: error })
+      return res.status(500).send({
+        success: true,
+        msg: 'Ocorreu um erro por parte do servidor',
+        error: error
+      })
     }
   }
 
@@ -107,15 +150,29 @@ class UserController {
       if (id === req.userId) {
         const user = await User.findByIdAndDelete(id)
         if (user) {
-          return res.status(200).send({ msg: 'Usuário deletado com sucesso' })
+          return res.status(200).send({
+            success: true,
+            data: user,
+            msg: 'Usuário deletado com sucesso',
+          })
         } else {
-          return res.status(400).send({ error: 'Falha ao deletar usuário' })
+          return res.status(400).send({
+            success: false,
+            msg: 'Falha ao deletar usuário'
+          })
         }
       } else {
-        return res.status(400).send({ error: 'Você não pode deletar esse usuário' })
+        return res.status(401).send({
+          success: false,
+          msg: 'Você não pode deletar esse usuário',
+          error: 'unauthorized'
+        })
       }
     } catch (error) {
-      return res.status(500).send({ msg: 'Ocorreu um erro por parte do servidor', error: error })
+      return res.status(500).send({
+        msg: 'Ocorreu um erro por parte do servidor',
+        error: error
+      })
     }
   }
 
@@ -130,29 +187,53 @@ class UserController {
         if (userPassword) {
           const arePasswordsEqual = checkPassword(password, userPassword)
           if (!arePasswordsEqual) {
-            return res.status(400).send({ msg: 'Senha inválida' })
+            return res.status(400).send({
+              success: false,
+              msg: 'Senha inválida'
+            })
           } else {
             const hashedNewPassword = await hashPassword(newPassword)
             const areNewPasswordEqual = checkPassword(newPassword, userPassword)
             if (!areNewPasswordEqual) {
               const updatedUser = await User.findByIdAndUpdate(id, { password: hashedNewPassword })
               if (updatedUser) {
-                return res.status(200).send({ msg: 'Senha alterada com sucesso!' })
+                return res.status(200).send({
+                  success: true,
+                  data: user,
+                  msg: 'Senha alterada com sucesso'
+                })
               } else {
-                return res.status(400).send({ msg: 'Erro ao seguir com a requisição' })
+                return res.status(400).send({
+                  success: false,
+                  msg: 'Erro ao seguir com a requisição'
+                })
               }
             } else {
-              return res.status(400).send({ msg: 'A nova senha não pode ser igual a anterior' })
+              return res.status(400).send({
+                success: false,
+                msg: 'A nova senha não pode ser igual a anterior'
+              })
             }
           }
         } else {
-          return res.status(400).send({ msg: 'Erro, usuário não encontrado' })
+          return res.status(400).send({
+            success: false,
+            msg: 'Erro, usuário não encontrado'
+          })
         }
       } else {
-        return res.status(401).send({ msg: 'Você não pode alterar a senha desse usuário' })
+        return res.status(401).send({
+          success: false,
+          msg: 'Você não pode alterar a senha desse usuário',
+          error: 'unauthorized'
+        })
       }
     } catch (error) {
-      return res.status(500).send({ msg: 'Ocorreu um erro por parte do servidor', error: error })
+      return res.status(500).send({
+        success: false,
+        msg: 'Ocorreu um erro por parte do servidor',
+        error: error
+      })
     }
   }
 
@@ -172,16 +253,29 @@ class UserController {
         if (updateResetPasswordToken) {
           const isEmailSended = mail.sendEmail(email, { token }, 'Recuperar senha', 'forgotPassword')
           if (isEmailSended) {
-            return res.status(200).send({ msg: `Foi enviado um e-mail para ${email}` })
+            return res.status(200).send({
+              success: true,
+              msg: `Foi enviado um e-mail para ${email}`
+            })
           } else {
-            return res.status(500).send({ error: 'Ocorreu um erro ao enviar o e-mail' })
+            return res.status(500).send({
+              success: false,
+              msg: 'Ocorreu um erro ao enviar o e-mail'
+            })
           }
         }
       } else {
-        return res.status(400).send({ error: 'O e-mail informado não está cadastrado no sistema' })
+        return res.status(400).send({
+          success: true,
+          msg: 'O e-mail informado não está cadastrado no sistema'
+        })
       }
     } catch (error) {
-      return res.status(500).send({ error: 'Ocorreu um erro ao prosseguir com a requisição' })
+      return res.status(500).send({
+        success: false,
+        msg: 'Ocorreu um erro ao prosseguir com a requisição',
+        error: error
+      })
     }
   }
 
@@ -197,24 +291,46 @@ class UserController {
               const hashedNewPassword = await hashPassword(password)
               const userResetPassword = await User.findByIdAndUpdate(user.id, { password: hashedNewPassword })
               if (userResetPassword) {
-                return res.status(200).send({ msg: 'Sua senha foi redefinida com sucesso' })
+                return res.status(200).send({
+                  success: true,
+                  msg: 'Sua senha foi redefinida com sucesso'
+                })
               } else {
-                return res.status(500).send({ error: 'Erro ao redefinir senha' })
+                return res.status(500).send({
+                  success: false,
+                  msg: 'Erro ao redefinir senha'
+                })
               }
             } else {
-              return res.status(4000).send({ error: 'A nova senha não pode ser igual a anterior' })
+              return res.status(4000).send({
+                success: false,
+                msg: 'A nova senha não pode ser igual a anterior'
+              })
             }
           } else {
-            return res.status(400).send({ error: 'Token expirado' })
+            return res.status(400).send({
+              success: false,
+              msg: 'Token expirado'
+            })
           }
         } else {
-          return res.status(500).send({ error: 'Erro ao prosseguir com a requisição' })
+          return res.status(500).send({
+            success: false,
+            msg: 'Erro ao prosseguir com a requisição'
+          })
         }
       } else {
-        return res.status(400).send({ msg: 'Token inválido' })
+        return res.status(400).send({
+          success: false,
+          msg: 'Token inválido'
+        })
       }
     } catch (error) {
-      return res.status(500).send({ error: 'Erro ao prosseguir com a requisição' })
+      return res.status(500).send({
+        success: false,
+        msg: 'Erro ao prosseguir com a requisição',
+        error: error
+      })
     }
   }
 }
