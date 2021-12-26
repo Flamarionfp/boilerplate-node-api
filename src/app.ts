@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import morgan from 'morgan'
 import userRoutes from './routes/user'
 class App {
   express: express.Application
@@ -8,6 +9,7 @@ class App {
     this.express = express()
     this.middlewares()
     this.routes()
+    this.logs()
   }
 
   private middlewares(): void {
@@ -18,6 +20,10 @@ class App {
 
   private routes(): void {
     this.express.use(userRoutes)
+  }
+
+  private logs(): void {
+    this.express.use(morgan('dev'))
   }
 }
 
