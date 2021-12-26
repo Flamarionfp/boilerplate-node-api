@@ -4,9 +4,6 @@
 A Standard API é um projeto altamente escalável, trazendo um conjunto de códigos e configurações pré definidas afim de serem reaproveitadas e readptadas em outros projetos.
 <br>
 
-O projeto standard vem com o CRUD completo de usuários, autenticação JWT, criptografia em dados Sensíveis, controllers e models utilizando a sintaxe de POO, além do uso do typescript para melhorar a codificação.<p>
-<br>
-
 <h5>**COMANDOS**</h5>
 
 Rodar projeto em modo de desenvolvimento: `yarn dev`
