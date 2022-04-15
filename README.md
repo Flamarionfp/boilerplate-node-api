@@ -1,4 +1,4 @@
-<H2>BOILER PLATE NODE API!<H2>
+<H2>BOILER PLATE NODE API<H2>
 <br>
 
 Trata-se de um projeto altamente escalável, trazendo um conjunto de códigos e configurações pré definidas afim de serem reaproveitadas e readptadas em outros projetos.
