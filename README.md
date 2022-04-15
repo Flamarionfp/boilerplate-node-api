@@ -1,7 +1,7 @@
-<H2>BEM VINDO A STANDARD API!<H2>
+<H2>BOILER PLATE NODE API!<H2>
 <br>
 
-A Standard API é um projeto altamente escalável, trazendo um conjunto de códigos e configurações pré definidas afim de serem reaproveitadas e readptadas em outros projetos.
+Trata-se de um projeto altamente escalável, trazendo um conjunto de códigos e configurações pré definidas afim de serem reaproveitadas e readptadas em outros projetos.
 <br>
 
 <h5>**COMANDOS**</h5>
